@@ -1,6 +1,9 @@
+import "../globals.css";
 import { useLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { Children, Locale } from "@/types";
+import { ClerkProvider } from "@clerk/nextjs";
+
 
 export default function LocaleLayout({
   children,
@@ -17,8 +20,10 @@ export default function LocaleLayout({
   }
 
   return (
-    <html lang={locale}>
-      <body>{children}</body>
-    </html>
+    <ClerkProvider>
+      <html lang={locale}>
+        <body>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }
