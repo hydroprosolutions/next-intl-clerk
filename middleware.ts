@@ -1,6 +1,17 @@
 import createMiddleware from "next-intl/middleware";
 import { authMiddleware, redirectToSignIn } from "@clerk/nextjs";
 
+const locales = ["en", "es"];
+
+const publicPages = [
+  "/sign-in/",
+  "/en/sign-in",
+  "/es/sign-in",
+  "sign-up",
+  "/en/sign-up",
+  "/es/sign-up",
+];
+
 const intlMiddleware = createMiddleware({
   // A list of all locales that are supported
   locales: ["en", "es"],
@@ -11,7 +22,14 @@ const intlMiddleware = createMiddleware({
 
 export default authMiddleware({
   beforeAuth: (req) => {
-    return intlMiddleware(req);
+    const publicPathnameRegex = RegExp(
+      `^(/(${locales.join("|")}))?(${publicPages.join("|")})?/?$`,
+      "i"
+    );
+    const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
+    if (isPublicPage) {
+      return intlMiddleware(req);
+    }
   },
   afterAuth: (auth, req, evt) => {
     // handle users who aren't authenticated
